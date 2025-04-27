@@ -1,0 +1,177 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}    % 数学公式支持
+\usepackage{amsfonts}   % 数学符号支持
+\usepackage{amssymb}    % 数学符号支持
+\usepackage{quantikz}   % 绘制量子电路
+\usepackage{ctex}       % 支持中文
+\usepackage{caption} % 关键宏包
+\captionsetup[figure]{font=small} % 设置caption字体为small
+
+\title{第四届CCF大赛高校赛道 - 决赛}
+\date{} % 去掉日期
+
+\begin{document}
+
+\maketitle
+\vspace{-2em} % 调整标题位置，减少垂直间距
+
+\section{编程题一}
+\subsection{证明量子线路优化方案的正确性}
+
+$H$、$X$、$Y$和$Z$门均为单比特量子门，可通过计算并比较优化前后矩阵表达式是否一致来验证优化的正确性。
+
+\scalebox{1.3}{\textbf{a.}}
+\[
+    HXH = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}
+    \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}
+    \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}
+    = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix} = Z
+\]
+
+\scalebox{1.3}{\textbf{b.}}
+\[
+    HYH = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}
+    \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix}
+    \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}
+    = \begin{pmatrix} 0 & i \\ -i & 0 \end{pmatrix} = -Y
+\]
+
+\scalebox{1.3}{\textbf{c.}} 
+\[
+    HZH = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}
+    \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}
+    \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}
+    = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix} = X
+\]
+
+根据以上三个式子，可证得优化前后的线路等价，且都由三个量子门减为单个量子门，优化了量子门个数。
+
+\subsection{计算量子线路酉矩阵}
+假设有任意两量子比特量子态$|\psi\rangle$:
+
+\[
+|\psi\rangle = |q_1q_0\rangle = \alpha|00\rangle + \beta|01\rangle + \gamma|10\rangle + \delta|11\rangle = \begin{pmatrix} \alpha \\ \beta \\ \gamma \\ \delta \end{pmatrix}, \alpha^2+\beta^2+\gamma^2+\delta^2=1
+\]
+
+\scalebox{1.3}{\textbf{a.}}
+\begin{center}
+    \scalebox{1.2}{
+        \begin{quantikz}
+            \lstick{$q_1$} & \ctrl{1} & \qw \\
+            \lstick{$q_0$} & \gate{H} & \qw
+        \end{quantikz}
+    }
+\end{center}
+    
+上述量子电路通过$q_1$控制$q_0$的$H$门操作，当$q_1$为$|0\rangle$时，$q_0$不做任何操作；当$q_1$为$|1\rangle$时，对$q_0$做$H$门操作。
+$|\psi\rangle$作用在上述量子电路后得到$|\psi'\rangle$：
+
+\begin{align*}
+    |\psi'\rangle &= |q_1'q_0'\rangle 
+    = \alpha|00\rangle + \beta|01\rangle + 
+    \gamma \left( |1\rangle \otimes \left[ \frac{1}{\sqrt{2}} \left( |0\rangle + |1\rangle \right) \right] \right)
+    + \delta \left( |1\rangle \otimes \left[ \frac{1}{\sqrt{2}} \left( |0\rangle - |1\rangle \right) \right] \right) \\    
+    &= \alpha|00\rangle + \beta|01\rangle + \frac{1}{\sqrt{2}}(\gamma+\delta)|10\rangle + \frac{1}{\sqrt{2}}(\gamma-\delta)|11\rangle \\
+    &= \begin{pmatrix} \alpha \\ \beta \\ \frac{1}{\sqrt{2}}(\gamma+\delta) \\ \frac{1}{\sqrt{2}}(\gamma-\delta) \end{pmatrix}
+    = \begin{pmatrix}1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} \\ 0 & 0 & \frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{2}}\end{pmatrix}
+    \begin{pmatrix} \alpha \\ \beta \\ \gamma \\ \delta \end{pmatrix}
+\end{align*}
+
+\textbf{因此，对应的酉矩阵为\fbox{$\begin{pmatrix}1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} \\ 0 & 0 & \frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{2}}\end{pmatrix}$}.}
+
+\vspace{2em}
+\scalebox{1.3}{\textbf{b.}}
+\begin{center}
+    \scalebox{1.2}{
+        \begin{quantikz}
+            \lstick{$q_1$} & \gate{H} & \qw \\
+            \lstick{$q_0$} & \ctrl{-1} & \qw
+        \end{quantikz}
+    }
+\end{center}
+ 
+上述量子电路通过$q_0$控制$q_1$的$H$门操作，当$q_0$为$|0\rangle$时，$q_1$不做任何操作；当$q_0$为$|1\rangle$时，对$q_1$做$H$门操作。
+$|\psi\rangle$作用在上述量子电路后得到$|\psi'\rangle$：
+
+\begin{align*}
+    |\psi'\rangle &= |q_1'q_0'\rangle 
+    = \alpha|00\rangle + \beta \left( \left[ \frac{1}{\sqrt{2}} \left( |0\rangle + |1\rangle \right) \right] \otimes |1\rangle \right) + 
+    \gamma|10\rangle + \delta \left( \left[ \frac{1}{\sqrt{2}} \left( |0\rangle - |1\rangle \right) \right] \otimes |1\rangle \right) \\    
+    &= \alpha|00\rangle + \frac{1}{\sqrt{2}}(\beta+\delta)|01\rangle + \gamma|10\rangle + \frac{1}{\sqrt{2}}(\beta-\delta)|11\rangle \\
+    &= \begin{pmatrix} \alpha \\ \frac{1}{\sqrt{2}}(\beta+\delta) \\ \gamma \\ \frac{1}{\sqrt{2}}(\beta-\delta) \end{pmatrix}
+    = \begin{pmatrix}1 & 0 & 0 & 0 \\ 0 & \frac{1}{\sqrt{2}} & 0 & \frac{1}{\sqrt{2}} \\ 0 & 0 & 1 & 0 \\ 0 & \frac{1}{\sqrt{2}} & 0 & -\frac{1}{\sqrt{2}}\end{pmatrix}
+    \begin{pmatrix} \alpha \\ \beta \\ \gamma \\ \delta \end{pmatrix}
+\end{align*}
+
+\textbf{因此，对应的酉矩阵为\fbox{$\begin{pmatrix}1 & 0 & 0 & 0 \\ 0 & \frac{1}{\sqrt{2}} & 0 & \frac{1}{\sqrt{2}} \\ 0 & 0 & 1 & 0 \\ 0 & \frac{1}{\sqrt{2}} & 0 & -\frac{1}{\sqrt{2}}\end{pmatrix}$}.}
+
+\subsection{$SWAP$门操作}
+
+该部分为提交代码。
+
+\subsection{用$H$门和$CNOT_{1,0}$完成$SWAP$门功能}
+由$(3)$可知，两个$CNOT_{1,0}$和一个$CNOT_{0,1}$可以构造$SWAP$门。但由于不可使用$CNOT_{0,1}$门，因此可以通过$H$门和$CNOT_{1,0}$构造一个$CNOT_{0,1}$门，具体线路如下：
+
+\begin{center}
+    \begin{minipage}{0.3\textwidth}
+    \hspace{2.5em}
+    \begin{quantikz}
+        \lstick{$q_1$} & \targ{}   & \qw \\
+        \lstick{$q_0$} & \ctrl{-1} & \qw
+    \end{quantikz}
+    \end{minipage}
+    $\Longleftrightarrow$
+    \hspace{1em}
+    \begin{minipage}{0.4\textwidth}
+    \begin{quantikz}
+        \lstick{$q_1$} & \gate{H} & \ctrl{1} & \gate{H} & \qw \\
+        \lstick{$q_0$} & \gate{H} & \targ{}  & \gate{H} & \qw
+    \end{quantikz}
+    \end{minipage}
+\end{center}
+    
+现证明上述等价替换成立：
+
+设左侧线路对应矩阵$CNOT_{0,1}$，右侧线路对应矩阵$M$，则有：
+
+\begin{align*}
+    CNOT_{0,1} = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0 \\ 0 & 1 & 0 & 0\end{pmatrix}
+\end{align*}
+
+\begin{align*}
+    M &= (H_1 \otimes H_0) \cdot CNOT_{1,0} \cdot (H_1 \otimes H_0) \\
+    &= \frac{1}{2}\begin{pmatrix}1 & 1 & 1 & 1 \\ 1 & -1 & 1 & -1 \\ 1 & 1 & -1 & -1 \\ 1 & -1 & -1 & 1\end{pmatrix}
+    \begin{pmatrix}1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0\end{pmatrix}
+    \frac{1}{2}\begin{pmatrix}1 & 1 & 1 & 1 \\ 1 & -1 & 1 & -1 \\ 1 & 1 & -1 & -1 \\ 1 & -1 & -1 & 1\end{pmatrix} \\
+    &= \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0 \\ 0 & 1 & 0 & 0\end{pmatrix} = CNOT_{0,1}
+\end{align*}
+
+将上述对$CNOT_{0,1}$的等价替换带入$(3)$中的线路，得到的线路如下：
+
+\begin{figure}[h]
+    \centering
+    \scalebox{1.2}{
+    \begin{quantikz}
+        \lstick{$q_1$} & \ctrl{1} & \gate{H} & \ctrl{1} & \gate{H} & \ctrl{1} & \qw \\
+        \lstick{$q_0$} & \targ{}  & \gate{H} & \targ{}  & \gate{H} & \targ{}  & \qw
+    \end{quantikz}
+    }
+    \caption{$H$门和$CNOT_{1,0}$门构建$SWAP$}
+    \label{circuit:swap}
+\end{figure}
+
+验证该线路正确性：
+
+设该线路对应的矩阵为$M_{SWAP}$，则有：
+
+\begin{align*}
+    M_{SWAP} &= CNOT_{1,0} \cdot M \cdot CNOT_{1,0} \\
+    &=  \begin{pmatrix}1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0\end{pmatrix}
+    \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0 \\ 0 & 1 & 0 & 0\end{pmatrix}
+    \begin{pmatrix}1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0\end{pmatrix} \\
+    &= \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1\end{pmatrix} = SWAP
+\end{align*}
+
+综上，可按\fbox{\textbf{图\ref{circuit:swap}}}方式用$H$门和$CNOT_{1,0}$门构建$SWAP$门。
+
+\end{document}
