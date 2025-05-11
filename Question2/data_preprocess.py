@@ -9,6 +9,16 @@ def data_preprocess(data_csv):
     # 加载数据
     df = pd.read_csv(data_csv)
     
+    # 处理异常值
+    # Humidity > 100 的值设为100
+    df['Humidity'] = df['Humidity'].clip(upper=100)
+    
+    # PM10 < 0 的值设为0
+    df['PM10'] = df['PM10'].clip(lower=0)
+    
+    # SO2 < 0 的值设为0
+    df['SO2'] = df['SO2'].clip(lower=0)
+    
     # 打印数据基本信息
     print("数据维度:", df.shape)
     print("列名:", df.columns.tolist())
@@ -34,5 +44,5 @@ def data_preprocess(data_csv):
 
 
 if __name__ == "__main__":
-    data_csv = './train_data.csv'  
+    data_csv = './code/train_data.csv'  
     data_preprocess(data_csv)

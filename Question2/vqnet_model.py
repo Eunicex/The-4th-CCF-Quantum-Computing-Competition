@@ -37,9 +37,9 @@ class AirQualityNN(Module):
         """
         # 层的定义
         super().__init__()  
-        self.fc1 = Linear(9, 64)
-        self.fc2 = Linear(64, 32)
-        self.fc3 = Linear(32, 4)
+        self.fc1 = Linear(9, 8)    # 9×8 + 8 = 80
+        self.fc2 = Linear(8, 8)    # 8×8 + 8 = 72
+        self.fc3 = Linear(8, 4)    # 8×4 + 4 = 36
         self.relu = ReLu()
 
     def forward(self, x):
@@ -67,7 +67,7 @@ def model_train():
     # 训练循环
     num_epoch = 300
     batch = 32
-    lr = 0.1
+    lr = 0.05
 
     # 初始化模型和优化器
     model = AirQualityNN()
@@ -90,7 +90,7 @@ def model_train():
             optimizer.step()
         
         if (epoch+1) % 10 == 0:
-            print(f'Epoch [{epoch+1}/{num_epoch}], Loss: {loss.item()}')
+            print(f'Epoch [{epoch+1}/{num_epoch}], Loss: {loss.item()}, {model_test(model)}')
 
     return model
 
